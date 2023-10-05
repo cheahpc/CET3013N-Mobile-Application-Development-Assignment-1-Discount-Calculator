@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="divider">
+        <item name="android:background">?android:attr/listDivider</item>
+    </style>
+
+    <style name="divider.horizontal" parent="divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">2dp</item>
+        <item name="android:layout_marginHorizontal">20dp</item>
+    </style>
+
+    <style name="divider.vertical" parent="divider">
+        <item name="android:layout_width">1dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_marginVertical">20dp</item>
+    </style>
+
+    <style name="btn_row">
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_gravity">center</item>
+    </style>
+
+    <style name="btn">
+        <item name="android:background">@drawable/btn_round_full</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_margin">0dp</item>
+        <item name="android:hapticFeedbackEnabled">true</item>
+
+        <!--Background Color-->
+        <item name="backgroundTint">@color/faded_blue</item>
+
+        <!--Font Setting-->
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textColor">@color/dark_blue</item>
+        <item name="android:textSize">34sp</item>
+
+        <!--Layout-->
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+
+    </style>
+
+    <style name="btn.NumKey" parent="btn">
+        <item name="android:onClick">numKeyAction</item>
+    </style>
+
+    <style name="btn.ac_key" parent="btn">
+        <item name="backgroundTint">@color/faded_red</item>
+        <item name="android:textColor">@color/dark_red</item>
+        <item name="android:onClick">acKeyAction</item>
+    </style>
+
+    <style name="btn.updown_key" parent="btn">
+        <item name="backgroundTint">@color/dark_blue</item>
+        <item name="android:tint">@color/white</item>
+    </style>
+
+    <style name="btn.back_key" parent="btn">
+        <item name="tint">@color/dark_blue</item>
+    </style>
+
+    <style name="tv_result">
+        <!--Layout-->
+        <item name="android:layout_gravity">center</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_height">60dp</item>
+        <item name="android:layout_width">wrap_content</item>
+
+        <!--Font Setting-->
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textColor">@color/dark_blue</item>
+        <item name="android:textSize">50sp</item>
+    </style>
+
+    <style name="item_row">
+        <!--Layout-->
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:paddingHorizontal">20dp</item>
+    </style>
+
+    <style name="item_row.toggle" parent="item_row">
+        <item name="android:layout_height">match_parent</item>
+    </style>
+
+    <style name="item">
+        <!--Layout-->
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:gravity">center</item>
+
+        <!--Font Setting-->
+        <item name="fontFamily">sans-serif-condensed-medium</item>
+        <item name="android:textColor">@color/dark_blue</item>
+    </style>
+
+    <style name="item.left" parent="item">
+        <item name="android:layout_weight">1</item>
+        <item name="thumbTint">@drawable/toggle_thumb</item>
+        <item name="trackTint">@drawable/toggle_track</item>
+        <!--Font Setting-->
+        <item name="android:textSize">20sp</item>
+        <item name="android:textAlignment">textStart</item>
+        <item name="android:textColor">@color/dark_blue</item>
+    </style>
+
+    <style name="item.right" parent="item">
+
+        <item name="android:layout_weight">1</item>
+        <item name="android:paddingHorizontal">15dp</item>
+        <item name="android:inputType">numberDecimal</item>
+        <item name="android:background">@null</item>
+        <item name="android:layout_marginTop">5dp</item>
+        <item name="android:textCursorDrawable">@drawable/cursor</item>
+        <!--Font Setting-->
+        <item name="android:textSize">25sp</item>
+        <item name="android:textAlignment">textEnd</item>
+        <item name="android:selectAllOnFocus">false</item>
+    </style>
+
+    <style name="tv_formula">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">20dp</item>
+        <item name="android:gravity">center</item>
+
+        <!--Font Setting-->
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/dark_blue_faded</item>
+    </style>
+
+    <style name="switch_on_off">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="switchPadding">3dp</item>
+        <item name="thumbTint">@drawable/toggle_thumb</item>
+        <item name="trackTint">@drawable/toggle_track</item>
+
+        <item name="android:checked">true</item>
+
+        <!--Font Setting-->
+        <item name="android:textSize">20dp</item>
+        <item name="android:textAlignment">textEnd</item>
+        <item name="android:textColor">@color/dark_blue</item>
+    </style>
+</resources>

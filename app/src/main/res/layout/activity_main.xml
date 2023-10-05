@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        style="@style/Widget.MaterialComponents.Toolbar.Primary"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:backgroundTint="@color/dark_blue"
+        app:titleTextColor="@color/white"
+        tools:ignore="MissingConstraints" />
+
+    <LinearLayout
+        android:id="@+id/result_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="7"
+        android:orientation="vertical">
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="6"
+            android:background="@color/faded_blue"
+            tools:ignore="NestedWeights">
+
+            <TextView
+                android:id="@+id/tv_result"
+                style="@style/tv_result"
+                android:text="@string/result"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.363"
+                tools:ignore="TextSizeCheck" />
+
+            <TextView
+                android:id="@+id/tv_formula"
+                style="@style/tv_formula"
+                android:text="1231231231231"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.498"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_result"
+                app:layout_constraintVertical_bias="0.28" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switch_t"
+                style="@style/switch_on_off"
+                android:text="@string/on_off_tax"
+                app:layout_constraintBottom_toBottomOf="@+id/switch_dp"
+                app:layout_constraintEnd_toStartOf="@+id/switch_dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/switch_dp"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switch_dp"
+                style="@style/switch_on_off"
+                android:text="@string/on_off_percent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.473"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_formula"
+                app:layout_constraintVertical_bias="0.692" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switch_df"
+                style="@style/switch_on_off"
+                android:text="@string/on_off_fixed"
+                app:layout_constraintBottom_toBottomOf="@+id/switch_dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.386"
+                app:layout_constraintStart_toEndOf="@+id/switch_dp"
+                app:layout_constraintTop_toTopOf="@+id/switch_dp"
+                app:layout_constraintVertical_bias="0.0" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            style="@style/divider.horizontal"
+            android:layout_margin="0dp" />
+
+        <LinearLayout
+            android:id="@+id/row_1"
+            style="@style/item_row"
+            android:background="@color/dark_blue">
+
+            <TextView
+                android:id="@+id/tv_price"
+                style="@style/item.left"
+                android:textColor="@color/white"
+                android:text="@string/price" />
+
+            <EditText
+                android:id="@+id/ett_price"
+                style="@style/item.right"
+                android:textColor="@color/white"
+                android:focusedByDefault="true"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor,TouchTargetSizeCheck,TextContrastCheck,DuplicateSpeakableTextCheck,SpeakableTextPresentCheck" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/row_2"
+            style="@style/item_row">
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switch_tax_rate"
+                style="@style/item.left"
+                android:checked="true"
+                android:enabled="false"
+                android:text="@string/tax_rate" />
+
+            <EditText
+                android:id="@+id/ett_tax_rate"
+                style="@style/item.right"
+                android:importantForAutofill="no"
+                tools:ignore="LabelFor,TouchTargetSizeCheck,TextContrastCheck,SpeakableTextPresentCheck" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/row_3"
+            style="@style/item_row">
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switch_percent"
+                style="@style/item.left"
+                android:text="@string/discount_percent" />
+
+            <EditText
+                android:id="@+id/ett_discount_percent"
+                style="@style/item.right"
+                android:autofillHints=""
+                tools:ignore="LabelFor,TouchTargetSizeCheck,TextContrastCheck,SpeakableTextPresentCheck" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/row_4"
+            style="@style/item_row">
+
+            <TextView
+                android:id="@+id/tv_fixed"
+                style="@style/item.left"
+                android:text="@string/discount_fixed" />
+
+            <EditText
+                android:id="@+id/ett_discount_fixed"
+                style="@style/item.right"
+                android:importantForAutofill="no"
+                tools:ignore="DuplicateIds,LabelFor,TextContrastCheck,TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <View
+        style="@style/divider.horizontal"
+        android:layout_height="5dp"
+        android:layout_margin="0dp"
+        android:background="@color/dark_blue" />
+
+    <LinearLayout style="@style/btn_row">
+
+        <Button
+            android:id="@+id/btn_numkey_7"
+            style="@style/btn.NumKey"
+            android:text="@string/numKey_7" />
+
+        <Button
+            android:id="@+id/btn_numkey_8"
+            style="@style/btn.NumKey"
+            android:text="@string/numKey_8" />
+
+        <Button
+            android:id="@+id/btn_numkey_9"
+            style="@style/btn.NumKey"
+            android:text="@string/numKey_9" />
+
+
+        <ImageButton
+            android:id="@+id/btn_back"
+            style="@style/btn.back_key"
+            android:contentDescription="Backspace"
+            app:srcCompat="@drawable/keyboard_backspace"
+            tools:ignore="HardcodedText,SpeakableTextPresentCheck" />
+    </LinearLayout>
+
+    <LinearLayout style="@style/btn_row">
+
+        <Button
+            android:id="@+id/btn_numkey_4"
+            style="@style/btn.NumKey"
+            android:text="@string/numKey_4" />
+
+        <Button
+            android:id="@+id/btn_numkey_5"
+            style="@style/btn.NumKey"
+            android:text="@string/numKey_5" />
+
+        <Button
+            android:id="@+id/btn_numkey_6"
+            style="@style/btn.NumKey"
+            android:text="@string/numKey_6" />
+
+        <Button
+            android:id="@+id/btn_all_clear"
+            style="@style/btn.ac_key"
+            android:text="@string/all_clear"
+            tools:ignore="TextContrastCheck" />
+    </LinearLayout>
+
+    <LinearLayout style="@style/btn_row">
+
+        <Button
+            android:id="@+id/btn_numkey_1"
+            style="@style/btn.NumKey"
+            android:text="@string/numKey_1" />
+
+        <Button
+            android:id="@+id/btn_numkey_2"
+            style="@style/btn.NumKey"
+            android:text="@string/numKey_2" />
+
+        <Button
+            android:id="@+id/btn_numkey_3"
+            style="@style/btn.NumKey"
+            android:text="@string/numKey_3" />
+
+        <ImageButton
+            android:id="@+id/btn_up"
+            style="@style/btn.updown_key"
+            android:contentDescription="Up"
+            app:srcCompat="@drawable/keyboard_arrow_up"
+            tools:ignore="HardcodedText,SpeakableTextPresentCheck" />
+    </LinearLayout>
+
+    <LinearLayout style="@style/btn_row">
+
+        <Button
+            android:id="@+id/btn_numkey_0"
+            style="@style/btn.NumKey"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:text="@string/numKey_0"
+            tools:ignore="VisualLintButtonSize" />
+
+        <Button
+            android:id="@+id/btn_numkey_dot"
+            style="@style/btn.NumKey"
+            android:text="@string/numKey_dot" />
+
+        <ImageButton
+            android:id="@+id/btn_down"
+            style="@style/btn.updown_key"
+            android:contentDescription="Down"
+            app:srcCompat="@drawable/keyboard_arrow_down"
+            tools:ignore="HardcodedText,SpeakableTextPresentCheck" />
+    </LinearLayout>
+</LinearLayout>

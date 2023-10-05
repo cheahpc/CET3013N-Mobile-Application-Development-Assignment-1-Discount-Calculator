@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">A1DiscountCalculatorApplication</string>
+    <string name="numKey_0">0</string>
+    <string name="numKey_1">1</string>
+    <string name="numKey_2">2</string>
+    <string name="numKey_3">3</string>
+    <string name="numKey_4">4</string>
+    <string name="numKey_5">5</string>
+    <string name="numKey_6">6</string>
+    <string name="numKey_7">7</string>
+    <string name="numKey_8">8</string>
+    <string name="numKey_9">9</string>
+    <string name="numKey_dot">.</string>
+    <string name="all_clear">AC</string>
+    <string name="result">0.00</string>
+    <string name="price">Price</string>
+    <string name="tax_rate">Tax %</string>
+    <string name="discount_percent">Discount %</string>
+    <string name="discount_fixed">Coupon</string>
+    <string name="menu_reset">Reset</string>
+    <string name="menu_flip">Flip Side</string>
+    <string name="menu_about">About</string>
+    <string name="on_off_tax">Tax %</string>
+    <string name="on_off_percent">Discount %</string>
+    <string name="on_off_fixed">Coupon</string>
+    <string name="formulaA">Price</string>
+    <string name="formulaB">Price + (Price * Tax)</string>
+    <string name="formulaC">Price + (Price * Tax) - (Price * Tax) * Discount Percent</string>
+    <string name="formulaD">Price + Tax - Fixed Discount</string>
+    <string name="formulaE">Price + Tax - Fixed Discount</string>
+    <string name="formulaF">Price + Tax - Discount Percent</string>
+</resources>
