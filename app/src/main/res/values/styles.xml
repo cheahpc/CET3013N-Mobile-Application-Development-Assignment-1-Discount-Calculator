@@ -135,7 +135,7 @@
         <item name="android:gravity">center</item>
 
         <!--Font Setting-->
-        <item name="android:textSize">18sp</item>
+        <item name="android:textSize">12sp</item>
         <item name="android:textColor">@color/dark_blue_faded</item>
     </style>
 

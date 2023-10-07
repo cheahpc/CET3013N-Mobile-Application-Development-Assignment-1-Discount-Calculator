@@ -135,7 +135,8 @@
                     style="@style/item.left"
                     android:checked="true"
                     android:enabled="false"
-                    android:text="@string/tax_rate" />
+                    android:text="@string/tax_rate"
+                    tools:ignore="TouchTargetSizeCheck" />
 
                 <EditText
                     android:id="@+id/ett_tax_rate"
@@ -152,7 +153,8 @@
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/switch_percent"
                     style="@style/item.left"
-                    android:text="@string/discount_percent" />
+                    android:text="@string/discount_percent"
+                    tools:ignore="TouchTargetSizeCheck" />
 
                 <EditText
                     android:id="@+id/ett_discount_percent"

@@ -19,10 +19,12 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
-import androidx.core.widget.doOnTextChanged
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.example.a1discountcalculatorapplication.databinding.ActivityMainBinding
-import kotlinx.coroutines.DelicateCoroutinesApi
 
 class AboutFragment : DialogFragment() {
     override fun onCreateView(
@@ -37,6 +39,7 @@ class AboutFragment : DialogFragment() {
 class MainActivity : AppCompatActivity() {
     private lateinit var b: ActivityMainBinding
     private lateinit var prevFocusView: EditText
+    private lateinit var viewModel: MyViewModel
 
     @SuppressLint("UseSwitchCompatOrMaterialCode", "SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,12 +59,18 @@ class MainActivity : AppCompatActivity() {
         // Set focused id
         prevFocusView = focus()
 
+        // Save UI state
+        viewModel = ViewModelProvider(this).get(MyViewModel::class.java)
+        viewModel.saveData("name", "John Doe")
+        val name: String? = viewModel.restoreData("name") as? String
+
+        // Update the UI with the user's name.
+
         // Set animation
         val enterAnimation = AnimationUtils.makeInAnimation(this, true)
         val exitAnimation = AnimationUtils.makeOutAnimation(this, true)
         enterAnimation.duration = 250
         exitAnimation.duration = 250
-
 
         // On click
         b.btnDown.setOnClickListener { focusRow(false) }
@@ -144,6 +153,7 @@ class MainActivity : AppCompatActivity() {
                     temp2.isEnabled = false
                 }
             }
+            calculate()
         }
         b.switchDp.setOnClickListener {
             val cont = b.resultContainer
@@ -194,6 +204,7 @@ class MainActivity : AppCompatActivity() {
                     temp2.isEnabled = false
                 }
             }
+            calculate()
         }
         b.switchDf.setOnClickListener {
             val cont = b.resultContainer
@@ -242,6 +253,7 @@ class MainActivity : AppCompatActivity() {
                     temp2.isEnabled = false
                 }
             }
+            calculate()
         }
 
         // On checked change for Tax; Percent
@@ -259,6 +271,7 @@ class MainActivity : AppCompatActivity() {
                     Toast.LENGTH_LONG
                 ).show()
             }
+            calculate()
         }
         b.switchPercent.setOnClickListener {
             if (b.switchPercent.isChecked) {
@@ -274,55 +287,40 @@ class MainActivity : AppCompatActivity() {
                     Toast.LENGTH_LONG
                 ).show()
             }
+            calculate()
         }
 
         // On text change
-        b.ettPrice.doOnTextChanged { _, _, _, _ ->
-            if (DiscountCalculator(
-                    b.ettPrice,
-                    b.ettTaxRate,
-                    b.ettDiscountPercent,
-                    b.ettDiscountFixed
-                ).calculateResult() > 0
-            ) {
-                b.tvResult.text = String.format(
-                    "%.2f",
-                    DiscountCalculator(
-                        b.ettPrice,
-                        b.ettTaxRate,
-                        b.ettDiscountPercent,
-                        b.ettDiscountFixed
-                    ).calculateResult().toString()
-                        .toDouble()
-                )
-            } else {
-                b.tvResult.text = "0.00"
-            }
-        }
-//        b.ettTaxRate.addTextChangedListener()
-//        b.ettDiscountPercent.addTextChangedListener()
-//        b.ettDiscountFixed.addTextChangedListener()
+        b.ettPrice.doAfterTextChanged {calculate()}
+        b.ettTaxRate.doAfterTextChanged{calculate()}
+        b.ettDiscountPercent.doAfterTextChanged{calculate()}
+        b.ettDiscountFixed.doAfterTextChanged{calculate()}
 
         // On focus change
         b.ettPrice.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 switchRowFocus()
             }
+            calculate()
         }
         b.ettTaxRate.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 switchRowFocus()
             }
+            calculate()
+
         }
         b.ettDiscountPercent.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 switchRowFocus()
             }
+            calculate()
         }
         b.ettDiscountFixed.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 switchRowFocus()
             }
+            calculate()
         }
     }
 
@@ -347,7 +345,6 @@ class MainActivity : AppCompatActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_reset -> {
@@ -407,20 +404,20 @@ class MainActivity : AppCompatActivity() {
                         // Do nothing
                     }
                 })
-                    enterAnimation.setAnimationListener(object : Animation.AnimationListener {
-                        override fun onAnimationStart(animation: Animation?) {
-                            // Do nothing
-                        }
+                enterAnimation.setAnimationListener(object : Animation.AnimationListener {
+                    override fun onAnimationStart(animation: Animation?) {
+                        // Do nothing
+                    }
 
-                        override fun onAnimationEnd(animation: Animation?) {
-                            // Set focus
-                            prevFocusView.requestFocus()
-                        }
+                    override fun onAnimationEnd(animation: Animation?) {
+                        // Set focus
+                        prevFocusView.requestFocus()
+                    }
 
-                        override fun onAnimationRepeat(animation: Animation?) {
-                            // Do nothing
-                        }
-                    })
+                    override fun onAnimationRepeat(animation: Animation?) {
+                        // Do nothing
+                    }
+                })
                 container.startAnimation(exitAnimation)
 
 
@@ -435,29 +432,299 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    fun numKeyAction(view: View) {
-        val defaultDecimalFormat = Regex("^[0-9]*.?[0-9]{0,2}$")
-        if (view is Button) {
-            val start = focus().selectionStart
-            val end = focus().selectionEnd
-            if (end - start > 0) {
-                focus().text.delete(start, end)
+    private fun calculate() {
+        val rCont = b.resultContainer
+        var result: Double = 0.00
+        var fString: String = "0.00"
+        val vPrice =
+            if (b.ettPrice.text.isNotEmpty()) b.ettPrice.text.toString().toDouble() else 0.0
+        val vTax =
+            if (b.ettTaxRate.text.isNotEmpty()) (b.ettTaxRate.text.toString()
+                .toDouble() / 100) else 0.0
+        val vDP =
+            if (b.ettDiscountPercent.text.isNotEmpty()) (b.ettDiscountPercent.text.toString()
+                .toDouble() / 100) else 0.0
+        val vDF =
+            if (b.ettDiscountFixed.text.isNotEmpty()) b.ettDiscountFixed.text.toString()
+                .toDouble() else 0.0
+        val x = DiscountCalculator(vPrice, vTax, vDP, vDF)
+
+        when (rCont.childCount) {
+            3 -> {
+                // Price
+                fString = "Price"
+                result = x.calculateResult(1)
             }
 
-            if (focus().text.isEmpty()) {
-                if (view.text.equals(".")) {
-                    focus().setText("0.")
-                    focus().setSelection(focus().length())
-                    return
+            4 -> {
+                // Price [A1/B1/C]
+                when (rCont.getChildAt(3) as ViewGroup) {
+                    // Price A
+                    b.row2 -> {
+                        // Price [A1]
+                        fString = "Price + (Price * Tax)"
+                        result = x.calculateResult(2)
+                    }
+
+                    // Price B
+                    b.row3 -> {
+                        // Price [B1]
+                        fString = "Price - (Price * Discount%)"
+                        result = x.calculateResult(3)
+                    }
+
+                    // Price C
+                    b.row4 -> {
+                        // Price [C]
+                        fString = "Price - Coupon"
+                        result = x.calculateResult(4)
+                    }
+
+                    // Error
+                    else -> {
+                        // Default - Error
+                        fString = "ERROR"
+                        result = 0.00
+                    }
                 }
             }
-            var temp: String = focus().text.toString()
-            temp = temp.substring(0, start) + view.text + temp.substring(start)
 
-            if (temp.matches(defaultDecimalFormat)) {
-                focus().text.insert(start, view.text)
+            5 -> {
+                // Price [A/B/C] [A/B/C]
+                val childRow1 = rCont.getChildAt(3) as ViewGroup
+                val childRow2 = rCont.getChildAt(4) as ViewGroup
+                when (childRow1) {
+                    // Price Ax
+                    b.row2 -> {
+                        if (childRow2 == b.row3) {
+                            // Price [A] [B] : 2
+                            val child = childRow2.getChildAt(0) as SwitchCompat
+                            if (!child.isChecked) {
+                                // Price [A] [B0]
+                                fString =
+                                    "Price + (Price * Tax) - ((Price + (Price * Tax)) * Discount%)"
+                                result = x.calculateResult(5)
+                            } else {
+                                // Price [A] [B1]
+                                fString =
+                                    "Price + (Price * Tax) - (Price * Discount%)"
+                                result = x.calculateResult(6)
+                            }
+                        } else {
+                            // Price [A] [C]
+                            fString =
+                                "Price + (Price * Tax) - Coupon"
+                            result = x.calculateResult(7)
+                        }
+                    }
+
+                    // Price Bx
+                    b.row3 -> {
+                        if (childRow2 == b.row2) {
+                            // Price [B] [A]
+                            val child = childRow2.getChildAt(0) as SwitchCompat
+                            if (!child.isChecked) {
+                                // Price [B] [A0]
+                                fString =
+                                    "Price - (Price * Discount%) + ((Price - (Price * Discount%)) * Tax)"
+                                result = x.calculateResult(8)
+                            } else {
+                                // Price [B] [A1] = Price [A] [B1] -- 6
+                                fString =
+                                    "Price - (Price * Discount%) + (Price * Tax)"
+                                result = x.calculateResult(6)
+                            }
+                        } else {
+                            // Price [B] [C]
+                            fString =
+                                "Price - (Price * Discount%) - Coupon"
+                            result = x.calculateResult(9)
+                        }
+                    }
+
+                    // Price Cx
+                    b.row4 -> {
+                        val child = childRow2.getChildAt(0) as SwitchCompat
+                        if (childRow2 == b.row2) {
+                            if (!child.isChecked) {
+                                // Price [C] [A0]
+                                fString =
+                                    "Price - Coupon + ((Price - Coupon) * Tax)"
+                                result = x.calculateResult(10)
+                            } else {
+                                // Price [C] [A1] = Price [A] [C] -- 7
+                                fString =
+                                    "Price - Coupon + (Price * Tax)"
+                                result = x.calculateResult(7)
+                            }
+                        } else {
+                            // Price [C] [B]
+                            if (!child.isChecked) {
+                                // Price [C] [B0]
+                                fString =
+                                    "Price - Coupon - ((Price - Coupon) * Discount%)"
+                                result = x.calculateResult(11)
+                            } else {
+                                // Price [C] [B1] = Price [B] [C] -- 9
+                                fString =
+                                    "Price - Coupon - (Price * Discount%)"
+                                result = x.calculateResult(9)
+                            }
+                        }
+                    }
+
+                    // Error
+                    else -> {
+                        // Default - Error
+                        fString = "ERROR"
+                        result = 0.00
+                    }
+                }
+
+            }
+
+            6 -> {
+                // Price [A/B/C] [A/B/C] [A/B/C]
+                val childRow1 = rCont.getChildAt(3) as ViewGroup
+                val childRow2 = rCont.getChildAt(4) as ViewGroup
+                val childRow3 = rCont.getChildAt(5) as ViewGroup
+                when (childRow1) {
+                    // Price Axx
+                    b.row2 -> {
+                        if (childRow2 == b.row3) {
+                            val child = childRow2.getChildAt(0) as SwitchCompat
+                            if (!child.isChecked) {
+                                // Price [A] [B0] [C]
+                                fString =
+                                    "Price + (Price * Tax) - ((Price + (Price * Tax)) * Discount%) - Coupon"
+                                result = x.calculateResult(12)
+
+                            } else {
+                                // Price [A] [B1] [C]
+                                fString =
+                                    "Price + (Price * Tax) - (Price  * Discount%) - Coupon"
+                                result = x.calculateResult(13)
+                            }
+                        } else {
+                            val child = childRow3.getChildAt(0) as SwitchCompat
+                            if (!child.isChecked) {
+                                // Price [A] [C] [B0]
+                                fString =
+                                    "Price + (Price * Tax) - Coupon - ((Price + (Price * Tax) - Coupon) * Discount%)"
+                                result = x.calculateResult(14)
+                            } else {
+                                // Price [A] [C] [B1] = Price [A] [B1] [C] -- 13
+                                fString =
+                                    "Price + (Price * Tax) - Coupon - (Price * Discount%)"
+                                result = x.calculateResult(13)
+                            }
+                        }
+                    }
+
+                    // Price Bxx
+                    b.row3 -> {
+                        if (childRow2 == b.row2) {
+                            val child = childRow2.getChildAt(0) as SwitchCompat
+                            if (!child.isChecked) {
+                                // Price [B] [A0] [C]
+                                fString =
+                                    "Price - (Price * Discount%) + ((Price - (Price * Discount%)) * Tax) - Coupon"
+                                result = x.calculateResult(15)
+                            } else {
+                                // Price [B] [A1] [C] = Price [A] [B1] [C] -- 13
+                                fString =
+                                    "Price - (Price * Discount%) + (Price * Tax) - Coupon"
+                                result = x.calculateResult(13)
+                            }
+
+                        } else {
+                            val child = childRow3.getChildAt(0) as SwitchCompat
+                            if (!child.isChecked) {
+                                // Price [B] [C] [A0]
+                                fString =
+                                    "Price - (Price * Discount%) - Coupon + ((Price - (Price * Discount%) - Coupon) * Tax)"
+                                result = x.calculateResult(16)
+                            } else {
+                                // Price [B] [C] [A1] = Price [A] [B1] [C] -- 13
+                                fString =
+                                    "Price - (Price * Discount%) - Coupon + (Price * Tax)"
+                                result = x.calculateResult(13)
+                            }
+                        }
+                    }
+
+                    // Price Cxx
+                    b.row4 -> {
+                        val child1 = childRow2.getChildAt(0) as SwitchCompat
+                        val child2 = childRow3.getChildAt(0) as SwitchCompat
+                        if (childRow2 == b.row2) {
+                            if (!child1.isChecked) {
+                                if (!child2.isChecked) {
+                                    // Price [C] [A0] [B0]
+                                    fString =
+                                        "Price - Coupon + ((Price - Coupon) * Tax) - ((Price - Coupon + ((Price - Coupon) * Tax)) * Discount%)"
+                                    result = x.calculateResult(17)
+                                } else {
+                                    // Price [C] [A0] [B1]
+                                    fString =
+                                        "Price - Coupon + ((Price - Coupon) * Tax) - (Price * Discount%)"
+                                    result = x.calculateResult(18)
+                                }
+                            } else {
+                                if (!child2.isChecked) {
+                                    // Price [C] [A1] [B0]
+                                    fString =
+                                        "Price - Coupon + (Price * Tax) - ((Price + (Price * Tax)) * Discount%)"
+                                    result = x.calculateResult(19)
+                                } else {
+                                    // Price [C] [A1] [B1]
+                                    fString =
+                                        "Price - Coupon + (Price * Tax) - (Price * Discount%)"
+                                    result = x.calculateResult(13)
+                                }
+                            }
+                        } else {
+                            if (!child1.isChecked) {
+                                if (!child2.isChecked) {
+                                    // Price [C] [B0] [A0]
+                                    fString =
+                                        "Price - Coupon - ((Price - Coupon) * Discount%) + ((Price - Coupon - ((Price - Coupon) * Discount%)) * Tax)"
+                                    result = x.calculateResult(20)
+                                } else {
+                                    // Price [C] [B0] [A1]
+                                    fString =
+                                        "Price - Coupon - ((Price - Coupon) * Discount%) + (Price * Tax)"
+                                    result = x.calculateResult(21)
+                                }
+                            } else {
+                                if (!child2.isChecked) {
+                                    // Price [C] [B1] [A0]
+                                    fString =
+                                        "Price - Coupon - (Price * Discount%) + ((Price - Coupon - (Price * Discount%)) * Tax)"
+                                    result = x.calculateResult(22)
+                                } else {
+                                    // Price [C] [B1] [A1]
+                                    fString =
+                                        "Price - Coupon - (Price * Discount%) + (Price * Tax)"
+                                    result = x.calculateResult(13)
+                                }
+                            }
+                        }
+                    }
+
+                    // Error
+                    else -> {
+                        // Default - Error
+                        fString = "ERROR"
+                        result = 0.00
+                    }
+                }
             }
         }
+
+        // Update Result and UI
+        b.tvResult.text = result.toString()
+        b.tvFormula.text = fString
     }
 
     private fun focusRow(previous: Boolean) {
@@ -583,31 +850,177 @@ class MainActivity : AppCompatActivity() {
         return currentFocus as EditText
     }
 
-}
+    fun numKeyAction(view: View) {
+        val defaultDecimalFormat = Regex("^[0-9]*.?[0-9]{0,2}$")
+        if (view is Button) {
+            val start = focus().selectionStart
+            val end = focus().selectionEnd
+            if (end - start > 0) {
+                focus().text.delete(start, end)
+            }
 
-class DiscountCalculator(price: EditText, tax: EditText, percent: EditText, fixed: EditText) {
-    private val valPrice =
-        if (price.text.isNotEmpty()) price.text.toString().toDouble() else 0.0
-    private val valTax = if (tax.text.isNotEmpty()) tax.text.toString().toDouble() else 0.0
-    private val valPercent =
-        if (percent.text.isNotEmpty()) percent.text.toString().toDouble() else 0.0
-    private val valFixed =
-        if (fixed.text.isNotEmpty()) fixed.text.toString().toDouble() else 0.0
-    private var result: Double = 0.0
+            if (focus().text.isEmpty()) {
+                if (view.text.equals(".")) {
+                    focus().setText("0.")
+                    focus().setSelection(focus().length())
+                    return
+                }
+            }
+            var temp: String = focus().text.toString()
+            temp = temp.substring(0, start) + view.text + temp.substring(start)
 
-    fun calculateResult(): Double {
-        // TODO: Formula A - Discount Percent > Tax Rate > Discount Fixed (DONE)
-        // TODO: Formula B - Discount Percent > Discount Fixed > Tax Rate
-        // TODO: Formula C - Discount Fixed > Discount Percent > Tax Rate
-        // TODO: Formula D - Tax Rate > Discount Percent > Discount Fixed
-        // TODO: Formula E - Tax Rate > Discount Fixed > Discount Percent
-        // TODO: Formula F - Discount Fixed > Tax Rate > Discount Percent
-        val percentAmount = valPrice * (valPercent / 100)
-        val taxAmount = (valPrice - percentAmount) * (valTax / 100)
-        return valPrice - percentAmount + taxAmount - valFixed
+            if (temp.matches(defaultDecimalFormat)) {
+                focus().text.insert(start, view.text)
+            }
+        }
     }
 }
 
-class UIState() {
-//    TODO("Try to remember UI state for Row1 Row2 Row3 and Row4")
+class DiscountCalculator(
+    p: Double,
+    t: Double = 0.0,
+    dp: Double = 0.0,
+    df: Double = 0.0
+) {
+    private var p = p
+    private var t = t
+    private var dp = dp
+    private var c = df
+    private var result: Double = 0.0
+    fun calculateResult(formula: Int): Double {
+        when (formula) {
+            1 -> {
+                // Price
+                result = p
+            }
+            // 1 Var
+            2 -> {
+                // Price [A1]
+                result = p + (p * t)
+            }
+
+            3 -> {
+                // Price [B1]
+                result = p - (p * dp)
+            }
+
+            4 -> {
+                // Price [C]
+                result = p - c
+            }
+
+            // 2 Var A
+            5 -> {
+                // Price [A] [B0]
+                result = p + (p * t) - ((p + (p * t)) * dp)
+            }
+
+            6 -> {
+                // Price [A] [B1]
+                result = p + (p * t) - (p * dp)
+            }
+
+            7 -> {
+                // Price [A] [C]
+                result = p + (p * t) - c
+            }
+
+            // 2 Var B
+            8 -> {
+                // Price [B] [A0]
+                result = p - (p * dp) + ((p - (p * dp)) * t)
+            }
+
+            9 -> { // Price [B] [A1] = Price [A] [B1] -- 6
+                // Price [B] [C]
+                result = p - (p * dp) - c
+            }
+
+            // 2 Var C
+            10 -> {
+                // Price [C] [A0]
+                result = p - c + ((p - c) * t)
+            }
+
+            11 -> { // Price [C] [A1] = Price [A] [C] -- 7
+                // Price [C] [B0]
+                result = p - c - ((p - c) * dp)
+            }
+
+            // 3 Var A
+            12 -> { // Price [C] [B1] = Price [B1] [C] -- 9
+                // Price [A] [B0] [C]
+                result = p + (p * t) - ((p + (p * t)) * dp) - c
+            }
+
+            13 -> {
+                // Price [A] [B1] [C]
+                result = p + (p * t) - (p * dp) - c
+            }
+
+            14 -> {
+                // Price [A] [C] [B0]
+                result = p + (p * t) - c - ((p + (p * t) - c) * dp)
+            }
+
+            // 3 Var B
+            15 -> { // Price [A] [C] [B1] = Pice [A] [B1] [C] == 13
+                // Price [B] [A0] [C]
+                result = p - (p * dp) + ((p - (p * dp)) * t) - c
+            }
+
+            16 -> { // Price [B] [A1] [C] = Price [A] [B1] [C] -- 13
+                // Price [B] [C] [A0]
+                result = p - (p * dp) - c + ((p - (p * dp) - c) * t)
+            }
+
+            // 3 Var C
+            17 -> { // Price [B] [C] [A1] = Price [A] [B1] [C] -- 13
+                // Price [C] [A0] [B0]
+                result = p - c + ((p - c) * t) - ((p - c + ((p - c) * t)) * dp)
+            }
+
+            18 -> {
+                // Price [C] [A0] [B1]
+                result = p - c + ((p - c) * t) - (p * dp)
+            }
+
+            19 -> {
+                // Price [C] [A1] [B0]
+                result = p - c + (p * t) - ((p - c + (p * t)) * dp)
+            }
+
+            20 -> { // Price [C] [A1] [B1] = Price [A] [B1] [C] -- 13
+                result = p - c - ((p - c) * dp) + ((p - c - ((p - c) * dp)) * t)
+            }
+
+            21 -> {
+                // Price [C] [B0] [A1]
+                result = p - c - ((p - c) * dp) + (p * t)
+            }
+
+            22 -> {
+                // Price [C] [B1] [A0]
+                result = p - c - (p * dp) + ((p - c - (p * dp)) * t)
+            }// Price [C] [B1] [A1] = Price [A] [B1] [C] -- 13
+
+            else -> {
+                // Do Nothing?
+                result = 0.00
+            }
+        }
+        return result
+    }
+}
+
+
+class MyViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel() {
+
+    fun saveData(key: String, value: Any) {
+        savedStateHandle[key] = value
+    }
+
+    fun restoreData(key: String): Any? {
+        return savedStateHandle[key]
+    }
 }

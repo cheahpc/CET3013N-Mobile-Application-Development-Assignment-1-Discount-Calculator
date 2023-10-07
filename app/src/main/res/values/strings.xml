@@ -29,8 +29,8 @@
     <string name="menu_reset">Reset</string>
     <string name="menu_flip">Flip Side</string>
     <string name="menu_about">About</string>
-    <string name="on_off_tax">Tax %</string>
-    <string name="on_off_percent">Discount %</string>
+    <string name="on_off_tax">Tax%</string>
+    <string name="on_off_percent">Discount%</string>
     <string name="on_off_fixed">Coupon</string>
     <string name="formulaA">Price</string>
     <string name="formulaB">Price + (Price * Tax)</string>
