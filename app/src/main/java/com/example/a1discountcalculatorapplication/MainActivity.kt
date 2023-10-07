@@ -162,7 +162,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun calculate() {
         val rCont = b.resultContainer
-        var result = 0.00
+        var result = 0.0
         var fString = ""
         val vPrice =
             if (b.ettPrice.text.isNotEmpty()) b.ettPrice.text.toString().toDouble() else 0.0
@@ -212,7 +212,7 @@ class MainActivity : AppCompatActivity() {
                     else -> {
                         // Default - Error
                         fString = getString(R.string.error)
-                        result = 0.00
+                        result = 0.0
                     }
                 }
             }
@@ -296,7 +296,7 @@ class MainActivity : AppCompatActivity() {
                     else -> {
                         // Default - Error
                         fString = getString(R.string.error)
-                        result = 0.00
+                        result = 0.0
                     }
                 }
 
@@ -419,7 +419,7 @@ class MainActivity : AppCompatActivity() {
                     else -> {
                         // Default - Error
                         fString = getString(R.string.error)
-                        result = 0.00
+                        result = 0.0
                     }
                 }
             }
@@ -986,7 +986,7 @@ class DiscountCalculator(
 
             else -> {
                 // Do Nothing?
-                result = 0.00
+                result = 0.0
             }
         }
         return result
