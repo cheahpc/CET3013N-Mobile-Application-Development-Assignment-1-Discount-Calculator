@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Discount Calculator</string>
+    <string name="subtitle">Developed by Cheah Pin Chee</string>
     <string name="app_version">V1.0</string>
     <string name="developer_name">Cheah Pin Chee</string>
     <string name="developer_email">mr.chee37@gmail.com</string>
@@ -34,6 +35,7 @@
     <string name="on_off_percent">Discount%</string>
     <string name="on_off_fixed">Coupon</string>
     <string name="error">ERROR</string>
+
 <!--    <string name="f1">Price</string>-->
 <!--    <string name="f2">Price + (Price * Tax)</string>-->
 <!--    <string name="f3">Price - (Price * Discount%)</string>-->

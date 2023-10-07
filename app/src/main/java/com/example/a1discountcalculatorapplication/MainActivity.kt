@@ -65,8 +65,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu, menu)
-        b.toolbar.title = "Discount Calculator"
-        b.toolbar.setBackgroundColor(getColor(R.color.faded_blue))
         menu.findItem(R.id.menu_flip).isEnabled = when (resources.configuration.orientation) {
             Configuration.ORIENTATION_LANDSCAPE -> true
             Configuration.ORIENTATION_PORTRAIT -> false
@@ -150,7 +148,6 @@ class MainActivity : AppCompatActivity() {
                     }
                 })
                 container.startAnimation(exitAnimation)
-
 
             }
 
