@@ -14,13 +14,14 @@
         style="@style/Widget.MaterialComponents.Toolbar.Primary"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        app:title="@string/app_name"
-        app:subtitle="@string/subtitle"
-        app:logo="@drawable/logo_s"
-        app:titleMarginStart="30dp"
         android:background="@color/dark_blue"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:logo="@drawable/logo_s"
+        app:subtitle="@string/subtitle"
+        app:subtitleTextColor="@color/white"
+        app:title="@string/app_name"
+        app:titleMarginStart="30dp"
         app:titleTextColor="@color/white"
         tools:ignore="MissingConstraints" />
 
