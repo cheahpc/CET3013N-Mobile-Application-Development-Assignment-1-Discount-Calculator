@@ -6,20 +6,33 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.Button
 import android.widget.EditText
-import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.widget.doOnTextChanged
+import androidx.fragment.app.DialogFragment
 import com.example.a1discountcalculatorapplication.databinding.ActivityMainBinding
+import kotlinx.coroutines.DelicateCoroutinesApi
 
+class AboutFragment : DialogFragment() {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.about, container, false)
+    }
+}
 
 class MainActivity : AppCompatActivity() {
     private lateinit var b: ActivityMainBinding
@@ -43,6 +56,13 @@ class MainActivity : AppCompatActivity() {
         // Set focused id
         prevFocusView = focus()
 
+        // Set animation
+        val enterAnimation = AnimationUtils.makeInAnimation(this, true)
+        val exitAnimation = AnimationUtils.makeOutAnimation(this, true)
+        enterAnimation.duration = 250
+        exitAnimation.duration = 250
+
+
         // On click
         b.btnDown.setOnClickListener { focusRow(false) }
         b.btnUp.setOnClickListener { focusRow(true) }
@@ -65,7 +85,8 @@ class MainActivity : AppCompatActivity() {
             focus().error = null
         }
         b.tvResult.setOnClickListener {
-            val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clipboardManager =
+                getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clipData = ClipData.newPlainText("text", b.tvResult.text)
             clipboardManager.setPrimaryClip(clipData)
             Toast.makeText(
@@ -74,10 +95,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         // On click for toggle Tax; Percent; Coupon
-        b.switchT!!.setOnClickListener {
+        b.switchT.setOnClickListener {
             val cont = b.resultContainer
-            if (b.switchT!!.isChecked) {
+            if (b.switchT.isChecked) {
                 // Add
+                b.row2.startAnimation(enterAnimation)
                 cont.addView(b.row2)
                 if (cont.childCount > 3) {
                     val temp1 = cont.getChildAt(3) as ViewGroup
@@ -98,7 +120,6 @@ class MainActivity : AppCompatActivity() {
                             temp.getChildAt(1).requestFocus()
                             temp = cont.getChildAt(x) as ViewGroup
                         }
-
                         // Remove the row
                         val temp2: SwitchCompat = temp.getChildAt(0) as SwitchCompat
                         temp2.setTextColor(getColor(R.color.dark_blue))
@@ -106,7 +127,9 @@ class MainActivity : AppCompatActivity() {
                         temp2.isEnabled = true
                         val temp3 = temp.getChildAt(1) as EditText
                         temp3.error = null
+                        temp3.text = null
                         b.row2.setBackgroundColor(getColor(R.color.transparent))
+                        b.row2.startAnimation(exitAnimation)
                         cont.removeView(b.row2)
                         break
                     }
@@ -122,10 +145,11 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        b.switchDp!!.setOnClickListener {
+        b.switchDp.setOnClickListener {
             val cont = b.resultContainer
-            if (b.switchDp!!.isChecked) {
+            if (b.switchDp.isChecked) {
                 // Add
+                b.row3.startAnimation(enterAnimation)
                 cont.addView(b.row3)
                 if (cont.childCount > 3) {
                     val temp1 = cont.getChildAt(3) as ViewGroup
@@ -153,7 +177,9 @@ class MainActivity : AppCompatActivity() {
                         temp2.isEnabled = true
                         val temp3 = temp.getChildAt(1) as EditText
                         temp3.error = null
+                        temp3.text = null
                         b.row3.setBackgroundColor(getColor(R.color.transparent))
+                        b.row3.startAnimation(exitAnimation)
                         cont.removeView(b.row3)
                         break
                     }
@@ -169,10 +195,11 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        b.switchDf!!.setOnClickListener {
+        b.switchDf.setOnClickListener {
             val cont = b.resultContainer
-            if (b.switchDf!!.isChecked) {
+            if (b.switchDf.isChecked) {
                 // Add
+                b.row4.startAnimation(enterAnimation)
                 cont.addView(b.row4)
                 if (cont.childCount > 3) {
                     val temp1 = cont.getChildAt(3) as ViewGroup
@@ -198,7 +225,9 @@ class MainActivity : AppCompatActivity() {
                         temp2.setTextColor(getColor(R.color.dark_blue))
                         val temp3 = temp.getChildAt(1) as EditText
                         temp3.error = null
+                        temp3.text = null
                         b.row4.setBackgroundColor(getColor(R.color.transparent))
+                        b.row4.startAnimation(exitAnimation)
                         cont.removeView(b.row4)
                         break
                     }
@@ -216,8 +245,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         // On checked change for Tax; Percent
-        b.switchTaxRate!!.setOnClickListener {
-            if (b.switchTaxRate!!.isChecked) {
+        b.switchTaxRate.setOnClickListener {
+            if (b.switchTaxRate.isChecked) {
                 Toast.makeText(
                     this,
                     "The tax rate will based on the initial price.",
@@ -231,8 +260,8 @@ class MainActivity : AppCompatActivity() {
                 ).show()
             }
         }
-        b.switchPercent!!.setOnClickListener {
-            if (b.switchPercent!!.isChecked) {
+        b.switchPercent.setOnClickListener {
+            if (b.switchPercent.isChecked) {
                 Toast.makeText(
                     this,
                     "The discount percent will based on the initial price.",
@@ -318,6 +347,7 @@ class MainActivity : AppCompatActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_reset -> {
@@ -326,10 +356,10 @@ class MainActivity : AppCompatActivity() {
                 b.row3.setBackgroundColor(getColor(R.color.transparent))
                 b.row4.setBackgroundColor(getColor(R.color.transparent))
 
-                b.tvPrice?.setTextColor(getColor(R.color.dark_blue))
-                b.switchTaxRate?.setTextColor(getColor(R.color.dark_blue))
-                b.switchPercent?.setTextColor(getColor(R.color.dark_blue))
-                b.tvFixed?.setTextColor(getColor(R.color.dark_blue))
+                b.tvPrice.setTextColor(getColor(R.color.dark_blue))
+                b.switchTaxRate.setTextColor(getColor(R.color.dark_blue))
+                b.switchPercent.setTextColor(getColor(R.color.dark_blue))
+                b.tvFixed.setTextColor(getColor(R.color.dark_blue))
 
                 switchRowFocus()
 
@@ -345,29 +375,62 @@ class MainActivity : AppCompatActivity() {
             }
 
             R.id.menu_flip -> {
-                // TODO fix the logic bug
                 // Flip the screen
-                val cont = b.contentContainer
-                val v1: LinearLayout? = when (cont!!.getChildAt(0)) {
-                    b.resultContainer -> b.resultContainer
-                    else -> b.btnContainer
-                }
-                val v2 = b.contentDivider
-                cont.removeView(v1)
-                cont.removeView(v2)
-                cont.addView(v2)
-                cont.addView(v1)
+                prevFocusView = currentFocus as EditText
+                val container = b.container as ViewGroup
+                val v1 = container.getChildAt(0)
+                val v2 = container.getChildAt(1)
+                val v3 = container.getChildAt(2)
 
-                // Set focus
-                prevFocusView.requestFocus()
-                b.ettPrice.error = null
-                b.ettTaxRate.error = null
+                val exitAnimation = AnimationUtils.makeOutAnimation(this, true)
+                val enterAnimation = AnimationUtils.makeInAnimation(this, true)
+                exitAnimation.duration = 250
+                enterAnimation.duration = 250
+
+                exitAnimation.setAnimationListener(object : Animation.AnimationListener {
+                    override fun onAnimationStart(animation: Animation?) {
+                        // Do nothing
+                    }
+
+                    override fun onAnimationEnd(animation: Animation?) {
+                        // Remove the views from the container
+                        container.removeView(v1)
+                        container.removeView(v2)
+                        container.removeView(v3)
+                        container.addView(v3)
+                        container.addView(v2)
+                        container.addView(v1)
+                        container.startAnimation(enterAnimation)
+                    }
+
+                    override fun onAnimationRepeat(animation: Animation?) {
+                        // Do nothing
+                    }
+                })
+                    enterAnimation.setAnimationListener(object : Animation.AnimationListener {
+                        override fun onAnimationStart(animation: Animation?) {
+                            // Do nothing
+                        }
+
+                        override fun onAnimationEnd(animation: Animation?) {
+                            // Set focus
+                            prevFocusView.requestFocus()
+                        }
+
+                        override fun onAnimationRepeat(animation: Animation?) {
+                            // Do nothing
+                        }
+                    })
+                container.startAnimation(exitAnimation)
+
+
             }
 
             R.id.menu_about -> {
-                // TODO: Show my detail page
-            }
+                // Show the fragment
+                AboutFragment().show(supportFragmentManager, "about_fragment")
 
+            }
         }
         return super.onOptionsItemSelected(item)
     }
@@ -461,10 +524,15 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             // Format the value
-            prevFocusView.setText(String.format("%.2f", prevFocusView.text.toString().toDouble()))
+            prevFocusView.setText(
+                String.format(
+                    "%.2f",
+                    prevFocusView.text.toString().toDouble()
+                )
+            )
 
             // Set the colors
-            prevLabel!!.setTextColor(getColor(R.color.dark_green))
+            prevLabel.setTextColor(getColor(R.color.dark_green))
             prevFocusView.setTextColor(getColor(R.color.dark_green))
             prevRow.setBackgroundColor(getColor(R.color.light_green))
         } else {
@@ -477,13 +545,13 @@ class MainActivity : AppCompatActivity() {
             }
             if (message.isNotEmpty()) {
                 // Set the colors
-                prevLabel!!.setTextColor(getColor(R.color.dark_red))
+                prevLabel.setTextColor(getColor(R.color.dark_red))
                 prevFocusView.setTextColor(getColor(R.color.dark_red))
                 prevRow.setBackgroundColor(getColor(R.color.faded_red))
                 prevFocusView.error = message
             } else {
                 prevFocusView.error = null
-                prevLabel!!.setTextColor(getColor(R.color.dark_blue))
+                prevLabel.setTextColor(getColor(R.color.dark_blue))
                 prevFocusView.setTextColor(getColor(R.color.dark_blue))
                 prevRow.setBackgroundColor(getColor(R.color.transparent))
             }
@@ -505,7 +573,7 @@ class MainActivity : AppCompatActivity() {
             else -> b.tvFixed
         }
         // Highlight the row
-        prevLabel!!.setTextColor(getColor(R.color.white))
+        prevLabel.setTextColor(getColor(R.color.white))
         prevFocusView.setTextColor(getColor(R.color.white))
         prevFocusView.error = null
         prevRow.setBackgroundColor(getColor(R.color.dark_blue))
@@ -518,11 +586,13 @@ class MainActivity : AppCompatActivity() {
 }
 
 class DiscountCalculator(price: EditText, tax: EditText, percent: EditText, fixed: EditText) {
-    private val valPrice = if (price.text.isNotEmpty()) price.text.toString().toDouble() else 0.0
+    private val valPrice =
+        if (price.text.isNotEmpty()) price.text.toString().toDouble() else 0.0
     private val valTax = if (tax.text.isNotEmpty()) tax.text.toString().toDouble() else 0.0
     private val valPercent =
         if (percent.text.isNotEmpty()) percent.text.toString().toDouble() else 0.0
-    private val valFixed = if (fixed.text.isNotEmpty()) fixed.text.toString().toDouble() else 0.0
+    private val valFixed =
+        if (fixed.text.isNotEmpty()) fixed.text.toString().toDouble() else 0.0
     private var result: Double = 0.0
 
     fun calculateResult(): Double {
@@ -536,5 +606,8 @@ class DiscountCalculator(price: EditText, tax: EditText, percent: EditText, fixe
         val taxAmount = (valPrice - percentAmount) * (valTax / 100)
         return valPrice - percentAmount + taxAmount - valFixed
     }
+}
 
+class UIState() {
+//    TODO("Try to remember UI state for Row1 Row2 Row3 and Row4")
 }

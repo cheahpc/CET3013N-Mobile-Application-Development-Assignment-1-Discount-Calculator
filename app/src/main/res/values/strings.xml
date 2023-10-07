@@ -1,5 +1,14 @@
 <resources>
-    <string name="app_name">A1DiscountCalculatorApplication</string>
+    <string name="app_name">Discount Calculator</string>
+    <string name="app_version">V1.0</string>
+    <string name="developer_name">Cheah Pin Chee</string>
+    <string name="developer_email">mr.chee37@gmail.com</string>
+    <string name="developer_contact">0108845880</string>
+    <string name="tv_app_name">App:</string>
+    <string name="tv_app_ver">Version:</string>
+    <string name="tv_dev_name">Developer:</string>
+    <string name="tv_dev_email">Email:</string>
+    <string name="tv_dev_contact">Contact:</string>
     <string name="numKey_0">0</string>
     <string name="numKey_1">1</string>
     <string name="numKey_2">2</string>
@@ -29,4 +38,5 @@
     <string name="formulaD">Price + Tax - Fixed Discount</string>
     <string name="formulaE">Price + Tax - Fixed Discount</string>
     <string name="formulaF">Price + Tax - Discount Percent</string>
+
 </resources>

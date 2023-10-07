@@ -25,10 +25,10 @@
     </style>
 
     <style name="btn">
-        <item name="android:background">@drawable/btn_round_full</item>
+        <item name="android:background">@color/faded_blue</item>
         <item name="android:layout_weight">1</item>
         <item name="android:layout_margin">0dp</item>
-        <item name="android:hapticFeedbackEnabled">true</item>
+
 
         <!--Background Color-->
         <item name="backgroundTint">@color/faded_blue</item>
@@ -47,12 +47,15 @@
 
     <style name="btn.NumKey" parent="btn">
         <item name="android:onClick">numKeyAction</item>
+        <item name="android:hapticFeedbackEnabled">true</item>
     </style>
 
     <style name="btn.ac_key" parent="btn">
         <item name="backgroundTint">@color/faded_red</item>
         <item name="android:textColor">@color/dark_red</item>
         <item name="android:onClick">acKeyAction</item>
+        <item name="android:textSize">32sp</item>
+        <item name="android:hapticFeedbackEnabled">true</item>
     </style>
 
     <style name="btn.updown_key" parent="btn">
@@ -149,5 +152,40 @@
         <item name="android:textSize">20dp</item>
         <item name="android:textAlignment">textEnd</item>
         <item name="android:textColor">@color/dark_blue</item>
+    </style>
+
+    <style name="text_column">
+        <!--Layout Setting-->
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:gravity">end</item>
+    </style>
+
+    <style name="text">
+        <!--Layout Setting-->
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">20dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center</item>
+
+        <!--Font Setting-->
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="tv.label" parent="text">
+        <item name="android:paddingEnd">10dp</item>
+        <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:textAlignment">textEnd</item>
+        <item name="android:textColor">@color/light_blue</item>
+    </style>
+
+    <style name="tv.text" parent="text">
+        <item name="android:paddingStart">10dp</item>
+        <item name="fontFamily">sans-serif</item>
+        <item name="android:textAlignment">textStart</item>
+        <item name="android:textColor">@color/faded_blue</item>
+
     </style>
 </resources>

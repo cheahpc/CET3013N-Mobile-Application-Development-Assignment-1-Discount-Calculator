@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/master_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
@@ -13,9 +14,9 @@
         style="@style/Widget.MaterialComponents.Toolbar.Primary"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
+        android:backgroundTint="@color/dark_blue"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:backgroundTint="@color/dark_blue"
         app:titleTextColor="@color/white"
         tools:ignore="MissingConstraints" />
 
@@ -103,15 +104,15 @@
             <TextView
                 android:id="@+id/tv_price"
                 style="@style/item.left"
-                android:textColor="@color/white"
-                android:text="@string/price" />
+                android:text="@string/price"
+                android:textColor="@color/white" />
 
             <EditText
                 android:id="@+id/ett_price"
                 style="@style/item.right"
-                android:textColor="@color/white"
                 android:focusedByDefault="true"
                 android:importantForAutofill="no"
+                android:textColor="@color/white"
                 tools:ignore="LabelFor,TouchTargetSizeCheck,TextContrastCheck,DuplicateSpeakableTextCheck,SpeakableTextPresentCheck" />
         </LinearLayout>
 
