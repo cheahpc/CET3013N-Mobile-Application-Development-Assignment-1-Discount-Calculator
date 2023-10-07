@@ -9,6 +9,7 @@
     <string name="tv_dev_name">Developer:</string>
     <string name="tv_dev_email">Email:</string>
     <string name="tv_dev_contact">Contact:</string>
+    <string name="max_value">100.00</string>
     <string name="numKey_0">0</string>
     <string name="numKey_1">1</string>
     <string name="numKey_2">2</string>

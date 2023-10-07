@@ -34,7 +34,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            tools:ignore="NestedWeights">
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -64,7 +65,8 @@
                     app:layout_constraintHorizontal_bias="0.498"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/tv_result"
-                    app:layout_constraintVertical_bias="0.28" />
+                    app:layout_constraintVertical_bias="0.28"
+                    tools:ignore="TextSizeCheck,TextContrastCheck" />
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/switch_t"
@@ -74,7 +76,8 @@
                     app:layout_constraintEnd_toStartOf="@+id/switch_dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/switch_dp"
-                    app:layout_constraintVertical_bias="0.0" />
+                    app:layout_constraintVertical_bias="0.0"
+                    tools:ignore="TextSizeCheck" />
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/switch_dp"
@@ -85,7 +88,8 @@
                     app:layout_constraintHorizontal_bias="0.473"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/tv_formula"
-                    app:layout_constraintVertical_bias="0.692" />
+                    app:layout_constraintVertical_bias="0.692"
+                    tools:ignore="TextSizeCheck" />
 
                 <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/switch_df"
@@ -96,7 +100,8 @@
                     app:layout_constraintHorizontal_bias="0.386"
                     app:layout_constraintStart_toEndOf="@+id/switch_dp"
                     app:layout_constraintTop_toTopOf="@+id/switch_dp"
-                    app:layout_constraintVertical_bias="0.0" />
+                    app:layout_constraintVertical_bias="0.0"
+                    tools:ignore="TextSizeCheck" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -122,7 +127,7 @@
                     android:focusedByDefault="true"
                     android:importantForAutofill="no"
                     android:textColor="@color/white"
-                    tools:ignore="LabelFor,TouchTargetSizeCheck,TextContrastCheck,DuplicateSpeakableTextCheck,SpeakableTextPresentCheck" />
+                    tools:ignore="LabelFor,TouchTargetSizeCheck,TextContrastCheck,DuplicateSpeakableTextCheck,SpeakableTextPresentCheck,VisualLintTextFieldSize" />
             </LinearLayout>
 
 
@@ -136,13 +141,13 @@
                     android:checked="true"
                     android:enabled="false"
                     android:text="@string/tax_rate"
-                    tools:ignore="TouchTargetSizeCheck" />
+                    tools:ignore="TouchTargetSizeCheck,VisualLintButtonSize" />
 
                 <EditText
                     android:id="@+id/ett_tax_rate"
                     style="@style/item.right"
                     android:importantForAutofill="no"
-                    tools:ignore="LabelFor,TouchTargetSizeCheck,TextContrastCheck,SpeakableTextPresentCheck" />
+                    tools:ignore="LabelFor,TouchTargetSizeCheck,TextContrastCheck,SpeakableTextPresentCheck,VisualLintTextFieldSize" />
 
             </LinearLayout>
 
@@ -154,13 +159,13 @@
                     android:id="@+id/switch_percent"
                     style="@style/item.left"
                     android:text="@string/discount_percent"
-                    tools:ignore="TouchTargetSizeCheck" />
+                    tools:ignore="TouchTargetSizeCheck,VisualLintButtonSize" />
 
                 <EditText
                     android:id="@+id/ett_discount_percent"
                     style="@style/item.right"
                     android:autofillHints=""
-                    tools:ignore="LabelFor,TouchTargetSizeCheck,TextContrastCheck,SpeakableTextPresentCheck" />
+                    tools:ignore="LabelFor,TouchTargetSizeCheck,TextContrastCheck,SpeakableTextPresentCheck,VisualLintTextFieldSize" />
             </LinearLayout>
 
             <LinearLayout
@@ -176,7 +181,7 @@
                     android:id="@+id/ett_discount_fixed"
                     style="@style/item.right"
                     android:importantForAutofill="no"
-                    tools:ignore="DuplicateIds,LabelFor,TextContrastCheck,TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+                    tools:ignore="DuplicateIds,LabelFor,TextContrastCheck,TouchTargetSizeCheck,SpeakableTextPresentCheck,VisualLintTextFieldSize" />
             </LinearLayout>
         </LinearLayout>
 
