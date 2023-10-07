@@ -58,7 +58,7 @@
                 <TextView
                     android:id="@+id/tv_formula"
                     style="@style/tv_formula"
-                    android:text="1231231231231"
+                    android:text="@string/f15"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.498"
@@ -193,7 +193,7 @@
             android:id="@+id/container_button"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_weight="1.2"
             android:orientation="vertical">
 
             <LinearLayout style="@style/btn_row">

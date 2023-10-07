@@ -25,6 +25,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.a1discountcalculatorapplication.databinding.ActivityMainBinding
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 class AboutFragment : DialogFragment() {
     override fun onCreateView(
@@ -58,13 +60,14 @@ class MainActivity : AppCompatActivity() {
         b.ettPrice.requestFocus()
         // Set focused id
         prevFocusView = focus()
+        //Refresh UI
+        calculate()
 
         // Save UI state
         viewModel = ViewModelProvider(this).get(MyViewModel::class.java)
         viewModel.saveData("name", "John Doe")
         val name: String? = viewModel.restoreData("name") as? String
 
-        // Update the UI with the user's name.
 
         // Set animation
         val enterAnimation = AnimationUtils.makeInAnimation(this, true)
@@ -291,10 +294,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         // On text change
-        b.ettPrice.doAfterTextChanged {calculate()}
-        b.ettTaxRate.doAfterTextChanged{calculate()}
-        b.ettDiscountPercent.doAfterTextChanged{calculate()}
-        b.ettDiscountFixed.doAfterTextChanged{calculate()}
+        b.ettPrice.doAfterTextChanged { calculate() }
+        b.ettTaxRate.doAfterTextChanged { calculate() }
+        b.ettDiscountPercent.doAfterTextChanged { calculate() }
+        b.ettDiscountFixed.doAfterTextChanged { calculate() }
 
         // On focus change
         b.ettPrice.setOnFocusChangeListener { _, hasFocus ->
@@ -452,7 +455,7 @@ class MainActivity : AppCompatActivity() {
         when (rCont.childCount) {
             3 -> {
                 // Price
-                fString = "Price"
+                fString = getString(R.string.f1)
                 result = x.calculateResult(1)
             }
 
@@ -462,28 +465,28 @@ class MainActivity : AppCompatActivity() {
                     // Price A
                     b.row2 -> {
                         // Price [A1]
-                        fString = "Price + (Price * Tax)"
+                        fString = getString(R.string.f2)
                         result = x.calculateResult(2)
                     }
 
                     // Price B
                     b.row3 -> {
                         // Price [B1]
-                        fString = "Price - (Price * Discount%)"
+                        fString = getString(R.string.f3)
                         result = x.calculateResult(3)
                     }
 
                     // Price C
                     b.row4 -> {
                         // Price [C]
-                        fString = "Price - Coupon"
+                        fString = getString(R.string.f4)
                         result = x.calculateResult(4)
                     }
 
                     // Error
                     else -> {
                         // Default - Error
-                        fString = "ERROR"
+                        fString = getString(R.string.error)
                         result = 0.00
                     }
                 }
@@ -501,19 +504,16 @@ class MainActivity : AppCompatActivity() {
                             val child = childRow2.getChildAt(0) as SwitchCompat
                             if (!child.isChecked) {
                                 // Price [A] [B0]
-                                fString =
-                                    "Price + (Price * Tax) - ((Price + (Price * Tax)) * Discount%)"
+                                fString = getString(R.string.f5)
                                 result = x.calculateResult(5)
                             } else {
                                 // Price [A] [B1]
-                                fString =
-                                    "Price + (Price * Tax) - (Price * Discount%)"
+                                fString = getString(R.string.f6)
                                 result = x.calculateResult(6)
                             }
                         } else {
                             // Price [A] [C]
-                            fString =
-                                "Price + (Price * Tax) - Coupon"
+                            fString = getString(R.string.f7)
                             result = x.calculateResult(7)
                         }
                     }
@@ -525,19 +525,17 @@ class MainActivity : AppCompatActivity() {
                             val child = childRow2.getChildAt(0) as SwitchCompat
                             if (!child.isChecked) {
                                 // Price [B] [A0]
-                                fString =
-                                    "Price - (Price * Discount%) + ((Price - (Price * Discount%)) * Tax)"
+                                fString = getString(R.string.f8)
                                 result = x.calculateResult(8)
                             } else {
                                 // Price [B] [A1] = Price [A] [B1] -- 6
-                                fString =
-                                    "Price - (Price * Discount%) + (Price * Tax)"
+                                fString = getString(R.string.f9)
+
                                 result = x.calculateResult(6)
                             }
                         } else {
                             // Price [B] [C]
-                            fString =
-                                "Price - (Price * Discount%) - Coupon"
+                            fString = getString(R.string.f10)
                             result = x.calculateResult(9)
                         }
                     }
@@ -548,26 +546,22 @@ class MainActivity : AppCompatActivity() {
                         if (childRow2 == b.row2) {
                             if (!child.isChecked) {
                                 // Price [C] [A0]
-                                fString =
-                                    "Price - Coupon + ((Price - Coupon) * Tax)"
+                                fString = getString(R.string.f11)
                                 result = x.calculateResult(10)
                             } else {
                                 // Price [C] [A1] = Price [A] [C] -- 7
-                                fString =
-                                    "Price - Coupon + (Price * Tax)"
+                                fString = getString(R.string.f12)
                                 result = x.calculateResult(7)
                             }
                         } else {
                             // Price [C] [B]
                             if (!child.isChecked) {
                                 // Price [C] [B0]
-                                fString =
-                                    "Price - Coupon - ((Price - Coupon) * Discount%)"
+                                fString = getString(R.string.f13)
                                 result = x.calculateResult(11)
                             } else {
                                 // Price [C] [B1] = Price [B] [C] -- 9
-                                fString =
-                                    "Price - Coupon - (Price * Discount%)"
+                                fString = getString(R.string.f14)
                                 result = x.calculateResult(9)
                             }
                         }
@@ -576,7 +570,7 @@ class MainActivity : AppCompatActivity() {
                     // Error
                     else -> {
                         // Default - Error
-                        fString = "ERROR"
+                        fString = getString(R.string.error)
                         result = 0.00
                     }
                 }
@@ -595,27 +589,23 @@ class MainActivity : AppCompatActivity() {
                             val child = childRow2.getChildAt(0) as SwitchCompat
                             if (!child.isChecked) {
                                 // Price [A] [B0] [C]
-                                fString =
-                                    "Price + (Price * Tax) - ((Price + (Price * Tax)) * Discount%) - Coupon"
+                                fString = getString(R.string.f15)
                                 result = x.calculateResult(12)
 
                             } else {
                                 // Price [A] [B1] [C]
-                                fString =
-                                    "Price + (Price * Tax) - (Price  * Discount%) - Coupon"
+                                fString = getString(R.string.f16)
                                 result = x.calculateResult(13)
                             }
                         } else {
                             val child = childRow3.getChildAt(0) as SwitchCompat
                             if (!child.isChecked) {
                                 // Price [A] [C] [B0]
-                                fString =
-                                    "Price + (Price * Tax) - Coupon - ((Price + (Price * Tax) - Coupon) * Discount%)"
+                                fString = getString(R.string.f17)
                                 result = x.calculateResult(14)
                             } else {
                                 // Price [A] [C] [B1] = Price [A] [B1] [C] -- 13
-                                fString =
-                                    "Price + (Price * Tax) - Coupon - (Price * Discount%)"
+                                fString =getString(R.string.f18)
                                 result = x.calculateResult(13)
                             }
                         }
@@ -627,13 +617,11 @@ class MainActivity : AppCompatActivity() {
                             val child = childRow2.getChildAt(0) as SwitchCompat
                             if (!child.isChecked) {
                                 // Price [B] [A0] [C]
-                                fString =
-                                    "Price - (Price * Discount%) + ((Price - (Price * Discount%)) * Tax) - Coupon"
+                                fString =getString(R.string.f19)
                                 result = x.calculateResult(15)
                             } else {
                                 // Price [B] [A1] [C] = Price [A] [B1] [C] -- 13
-                                fString =
-                                    "Price - (Price * Discount%) + (Price * Tax) - Coupon"
+                                fString =getString(R.string.f20)
                                 result = x.calculateResult(13)
                             }
 
@@ -641,13 +629,11 @@ class MainActivity : AppCompatActivity() {
                             val child = childRow3.getChildAt(0) as SwitchCompat
                             if (!child.isChecked) {
                                 // Price [B] [C] [A0]
-                                fString =
-                                    "Price - (Price * Discount%) - Coupon + ((Price - (Price * Discount%) - Coupon) * Tax)"
+                                fString =getString(R.string.f21)
                                 result = x.calculateResult(16)
                             } else {
                                 // Price [B] [C] [A1] = Price [A] [B1] [C] -- 13
-                                fString =
-                                    "Price - (Price * Discount%) - Coupon + (Price * Tax)"
+                                fString =getString(R.string.f22)
                                 result = x.calculateResult(13)
                             }
                         }
@@ -661,25 +647,21 @@ class MainActivity : AppCompatActivity() {
                             if (!child1.isChecked) {
                                 if (!child2.isChecked) {
                                     // Price [C] [A0] [B0]
-                                    fString =
-                                        "Price - Coupon + ((Price - Coupon) * Tax) - ((Price - Coupon + ((Price - Coupon) * Tax)) * Discount%)"
+                                    fString =getString(R.string.f23)
                                     result = x.calculateResult(17)
                                 } else {
                                     // Price [C] [A0] [B1]
-                                    fString =
-                                        "Price - Coupon + ((Price - Coupon) * Tax) - (Price * Discount%)"
+                                    fString =getString(R.string.f24)
                                     result = x.calculateResult(18)
                                 }
                             } else {
                                 if (!child2.isChecked) {
                                     // Price [C] [A1] [B0]
-                                    fString =
-                                        "Price - Coupon + (Price * Tax) - ((Price + (Price * Tax)) * Discount%)"
+                                    fString =getString(R.string.f25)
                                     result = x.calculateResult(19)
                                 } else {
                                     // Price [C] [A1] [B1]
-                                    fString =
-                                        "Price - Coupon + (Price * Tax) - (Price * Discount%)"
+                                    fString =getString(R.string.f26)
                                     result = x.calculateResult(13)
                                 }
                             }
@@ -687,25 +669,21 @@ class MainActivity : AppCompatActivity() {
                             if (!child1.isChecked) {
                                 if (!child2.isChecked) {
                                     // Price [C] [B0] [A0]
-                                    fString =
-                                        "Price - Coupon - ((Price - Coupon) * Discount%) + ((Price - Coupon - ((Price - Coupon) * Discount%)) * Tax)"
+                                    fString =getString(R.string.f27)
                                     result = x.calculateResult(20)
                                 } else {
                                     // Price [C] [B0] [A1]
-                                    fString =
-                                        "Price - Coupon - ((Price - Coupon) * Discount%) + (Price * Tax)"
+                                    fString =getString(R.string.f28)
                                     result = x.calculateResult(21)
                                 }
                             } else {
                                 if (!child2.isChecked) {
                                     // Price [C] [B1] [A0]
-                                    fString =
-                                        "Price - Coupon - (Price * Discount%) + ((Price - Coupon - (Price * Discount%)) * Tax)"
+                                    fString =getString(R.string.f29)
                                     result = x.calculateResult(22)
                                 } else {
                                     // Price [C] [B1] [A1]
-                                    fString =
-                                        "Price - Coupon - (Price * Discount%) + (Price * Tax)"
+                                    fString =getString(R.string.f30)
                                     result = x.calculateResult(13)
                                 }
                             }
@@ -715,7 +693,7 @@ class MainActivity : AppCompatActivity() {
                     // Error
                     else -> {
                         // Default - Error
-                        fString = "ERROR"
+                        fString =getString(R.string.error)
                         result = 0.00
                     }
                 }
@@ -723,6 +701,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Update Result and UI
+
+        result = BigDecimal(result).setScale(2, RoundingMode.HALF_UP).toDouble()
         b.tvResult.text = result.toString()
         b.tvFormula.text = fString
     }
@@ -1012,7 +992,6 @@ class DiscountCalculator(
         return result
     }
 }
-
 
 class MyViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel() {
 
