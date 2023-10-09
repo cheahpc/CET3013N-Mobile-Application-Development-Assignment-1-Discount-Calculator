@@ -5,7 +5,6 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -19,49 +18,180 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.widget.doAfterTextChanged
-import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.ViewModelProvider
 import com.example.a1discountcalculatorapplication.databinding.ActivityMainBinding
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-class AboutFragment : DialogFragment() {
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.about, container, false)
-    }
-}
-
 class MainActivity : AppCompatActivity() {
     private lateinit var b: ActivityMainBinding
     private lateinit var prevFocusView: EditText
-
+    private lateinit var dvm: DiscountView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         // Refresh UI
         uiInit()
-
     }
 
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            Toast.makeText(baseContext, "Landscape Mode", Toast.LENGTH_SHORT).show()
-        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            Toast.makeText(baseContext, "Portrait Mode", Toast.LENGTH_SHORT).show()
+    override fun onPause() {
+        super.onPause()
+
+//         Set Formula
+        dvm.formula = b.tvFormula.text.toString()
+
+        dvm.priceError = b.ettPrice.error != null
+        dvm.taxError = b.ettTaxRate.error != null
+        dvm.discountError = b.ettDiscountPercent.error != null
+        dvm.couponError = b.ettDiscountFixed.error != null
+
+        // Check Toggle
+        dvm.taxToggle = b.switchT.isChecked
+        dvm.discountToggle = b.switchDp.isChecked
+        dvm.couponToggle = b.switchDf.isChecked
+
+        // Check Switch
+        dvm.taxSwitch = b.switchTaxRate.isChecked
+        dvm.taxSwitch_enable = b.switchT.isEnabled
+        dvm.discountSwitch = b.switchPercent.isChecked
+        dvm.discountSwitch_enable = b.switchPercent.isEnabled
+
+        // Check Sequence
+        dvm.sequence = ""
+        val cont = b.resultContainer
+        for (x in 3..cont.childCount) {
+            when (cont.getChildAt(x)) {
+                b.row2 -> {
+                    dvm.sequence = dvm.sequence + "A"
+                }
+
+                b.row3 -> {
+                    dvm.sequence = dvm.sequence + "B"
+                }
+
+                b.row4 -> {
+                    dvm.sequence = dvm.sequence + "C"
+                }
+            }
         }
 
-        setContentView(R.layout.activity_main)
-        b = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(b.root)
-        // Refresh the ui
-        uiInit()
-
+        // Set Focus
+        dvm.priceFocus = b.ettPrice.isFocused
+        dvm.taxFocus = b.ettTaxRate.isFocused
+        dvm.dpFocus = b.ettDiscountPercent.isFocused
+        dvm.couponFocus = b.ettDiscountFixed.isFocused
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        val cont = b.resultContainer as ViewGroup
+
+//        Set Formula
+        if (dvm.formula.isNotBlank()) {
+            b.tvFormula.text = dvm.formula
+        }
+
+        // Set toggle
+        b.switchT.isChecked = dvm.taxToggle
+        b.switchDp.isChecked = dvm.discountToggle
+        b.switchDf.isChecked = dvm.couponToggle
+
+        // Set switch
+        b.switchTaxRate.isChecked = dvm.taxSwitch
+        b.switchTaxRate.isEnabled = dvm.taxSwitch_enable
+        b.switchPercent.isChecked = dvm.discountSwitch
+        b.switchPercent.isEnabled = dvm.discountSwitch_enable
+
+        // Set sequence
+        if (dvm.sequence.isNotEmpty()) {
+            cont.removeView(b.row2)
+            cont.removeView(b.row3)
+            cont.removeView(b.row4)
+            for (x in 0..<dvm.sequence.length) {
+                when (dvm.sequence[x]) {
+                    'A' -> {
+                        cont.addView(b.row2 as View)
+                    }
+
+                    'B' -> {
+                        cont.addView(b.row3 as View)
+                    }
+
+                    'C' -> {
+                        cont.addView(b.row4 as View)
+                    }
+
+                }
+            }
+        }
+
+
+        // Set color
+        if (dvm.priceError) {
+            // Set Red
+            b.row1.setBackgroundColor(getColor(R.color.faded_red))
+            b.tvPrice.setTextColor(getColor(R.color.dark_red))
+            b.ettPrice.setTextColor(getColor(R.color.dark_red))
+        } else if (b.ettPrice.text.isNotEmpty() and (!b.ettPrice.isFocused)) {
+            // Set Green
+            b.row1.setBackgroundColor(getColor(R.color.light_green))
+            b.tvPrice.setTextColor(getColor(R.color.dark_green))
+            b.ettPrice.setTextColor(getColor(R.color.dark_green))
+        }
+        if (dvm.taxError) {
+            // Set Red
+            b.row2.setBackgroundColor(getColor(R.color.faded_red))
+            b.switchTaxRate.setTextColor(getColor(R.color.dark_red))
+            b.ettTaxRate.setTextColor(getColor(R.color.dark_red))
+        } else if (b.ettTaxRate.text.isNotEmpty() and (!b.ettTaxRate.isFocused)) {
+            // Set Green
+            b.row2.setBackgroundColor(getColor(R.color.light_green))
+            b.switchTaxRate.setTextColor(getColor(R.color.dark_green))
+            b.ettTaxRate.setTextColor(getColor(R.color.dark_green))
+        }
+        if (dvm.discountError) {
+            // Set Red
+            b.row3.setBackgroundColor(getColor(R.color.faded_red))
+            b.switchPercent.setTextColor(getColor(R.color.dark_red))
+            b.ettDiscountPercent.setTextColor(getColor(R.color.dark_red))
+        } else if (b.ettDiscountPercent.text.isNotEmpty() and (!b.ettDiscountPercent.isFocused)) {
+            // Set Green
+            b.row3.setBackgroundColor(getColor(R.color.light_green))
+            b.switchPercent.setTextColor(getColor(R.color.dark_green))
+            b.ettDiscountPercent.setTextColor(getColor(R.color.dark_green))
+        }
+        if (dvm.couponError) {
+            // Set Red
+            b.row4.setBackgroundColor(getColor(R.color.faded_red))
+            b.tvFixed.setTextColor(getColor(R.color.dark_red))
+            b.ettDiscountFixed.setTextColor(getColor(R.color.dark_red))
+        } else if (b.ettDiscountFixed.text.isNotEmpty() and (!b.ettDiscountFixed.isFocused)) {
+            // Set Green
+            b.row4.setBackgroundColor(getColor(R.color.light_green))
+            b.tvFixed.setTextColor(getColor(R.color.dark_green))
+            b.ettDiscountFixed.setTextColor(getColor(R.color.dark_green))
+        }
+
+        // Set focus
+        if(dvm.priceFocus) b.ettPrice.requestFocus()
+        if(dvm.taxFocus) b.ettTaxRate.requestFocus()
+        if(dvm.dpFocus) b.ettDiscountPercent.requestFocus()
+        if(dvm.couponFocus) b.ettDiscountFixed.requestFocus()
+    }
+
+//    override fun onConfigurationChanged(newConfig: Configuration) {
+//        super.onConfigurationChanged(newConfig)
+//        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+//            Toast.makeText(baseContext, "Landscape Mode", Toast.LENGTH_SHORT).show()
+//        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+//            Toast.makeText(baseContext, "Portrait Mode", Toast.LENGTH_SHORT).show()
+//        }
+//        setContentView(R.layout.activity_main)
+//        b = ActivityMainBinding.inflate(layoutInflater)
+//        setContentView(b.root)
+//        // Refresh the ui
+//        uiInit()
+//    }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu, menu)
@@ -153,8 +283,7 @@ class MainActivity : AppCompatActivity() {
 
             R.id.menu_about -> {
                 // Show the fragment
-                AboutFragment().show(supportFragmentManager, "about_fragment")
-
+                AboutView().show(supportFragmentManager, "about_fragment")
             }
         }
         return super.onOptionsItemSelected(item)
@@ -175,7 +304,7 @@ class MainActivity : AppCompatActivity() {
         val vDF =
             if (b.ettDiscountFixed.text.isNotEmpty()) b.ettDiscountFixed.text.toString()
                 .toDouble() else 0.0
-        val x = DiscountCalculator(vPrice, vTax, vDP, vDF)
+        val x = Discount(vPrice, vTax, vDP, vDF)
 
         when (rCont.childCount) {
             3 -> {
@@ -426,7 +555,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Update Result and UI
-
         result = BigDecimal(result).setScale(2, RoundingMode.HALF_UP).toDouble()
         b.tvResult.text = result.toString()
         b.tvFormula.text = fString
@@ -551,19 +679,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun focus(): EditText {
-        if (currentFocus != null){
+        if (currentFocus != null) {
             return currentFocus as EditText
         }
         b.ettPrice.requestFocus()
         return b.ettPrice
     }
 
-    private fun uiInit(){
-        setContentView(R.layout.activity_main)
+    private fun uiInit() {
         b = ActivityMainBinding.inflate(layoutInflater)
         setContentView(b.root)
         // Setup UI
         setSupportActionBar(b.toolbar)
+
+        dvm = ViewModelProvider(this)[DiscountView::class.java]
+
         b.ettPrice.showSoftInputOnFocus = false
         b.ettTaxRate.showSoftInputOnFocus = false
         b.ettDiscountPercent.showSoftInputOnFocus = false
@@ -857,138 +987,5 @@ class MainActivity : AppCompatActivity() {
                 focus().text.insert(start, view.text)
             }
         }
-    }
-}
-
-class DiscountCalculator(
-    private var p: Double,
-    private var t: Double = 0.0,
-    private var dp: Double = 0.0,
-    private var c: Double = 0.0
-) {
-    private var result: Double = 0.0
-    fun calculateResult(formula: Int): Double {
-        when (formula) {
-            1 -> {
-                // Price
-                result = p
-            }
-            // 1 Var
-            2 -> {
-                // Price [A1]
-                result = p + (p * t)
-            }
-
-            3 -> {
-                // Price [B1]
-                result = p - (p * dp)
-            }
-
-            4 -> {
-                // Price [C]
-                result = p - c
-            }
-
-            // 2 Var A
-            5 -> {
-                // Price [A] [B0]
-                result = p + (p * t) - ((p + (p * t)) * dp)
-            }
-
-            6 -> {
-                // Price [A] [B1]
-                result = p + (p * t) - (p * dp)
-            }
-
-            7 -> {
-                // Price [A] [C]
-                result = p + (p * t) - c
-            }
-
-            // 2 Var B
-            8 -> {
-                // Price [B] [A0]
-                result = p - (p * dp) + ((p - (p * dp)) * t)
-            }
-
-            9 -> { // Price [B] [A1] = Price [A] [B1] -- 6
-                // Price [B] [C]
-                result = p - (p * dp) - c
-            }
-
-            // 2 Var C
-            10 -> {
-                // Price [C] [A0]
-                result = p - c + ((p - c) * t)
-            }
-
-            11 -> { // Price [C] [A1] = Price [A] [C] -- 7
-                // Price [C] [B0]
-                result = p - c - ((p - c) * dp)
-            }
-
-            // 3 Var A
-            12 -> { // Price [C] [B1] = Price [B1] [C] -- 9
-                // Price [A] [B0] [C]
-                result = p + (p * t) - ((p + (p * t)) * dp) - c
-            }
-
-            13 -> {
-                // Price [A] [B1] [C]
-                result = p + (p * t) - (p * dp) - c
-            }
-
-            14 -> {
-                // Price [A] [C] [B0]
-                result = p + (p * t) - c - ((p + (p * t) - c) * dp)
-            }
-
-            // 3 Var B
-            15 -> { // Price [A] [C] [B1] = Price [A] [B1] [C] == 13
-                // Price [B] [A0] [C]
-                result = p - (p * dp) + ((p - (p * dp)) * t) - c
-            }
-
-            16 -> { // Price [B] [A1] [C] = Price [A] [B1] [C] -- 13
-                // Price [B] [C] [A0]
-                result = p - (p * dp) - c + ((p - (p * dp) - c) * t)
-            }
-
-            // 3 Var C
-            17 -> { // Price [B] [C] [A1] = Price [A] [B1] [C] -- 13
-                // Price [C] [A0] [B0]
-                result = p - c + ((p - c) * t) - ((p - c + ((p - c) * t)) * dp)
-            }
-
-            18 -> {
-                // Price [C] [A0] [B1]
-                result = p - c + ((p - c) * t) - (p * dp)
-            }
-
-            19 -> {
-                // Price [C] [A1] [B0]
-                result = p - c + (p * t) - ((p - c + (p * t)) * dp)
-            }
-
-            20 -> { // Price [C] [A1] [B1] = Price [A] [B1] [C] -- 13
-                result = p - c - ((p - c) * dp) + ((p - c - ((p - c) * dp)) * t)
-            }
-
-            21 -> {
-                // Price [C] [B0] [A1]
-                result = p - c - ((p - c) * dp) + (p * t)
-            }
-
-            22 -> {
-                // Price [C] [B1] [A0]
-                result = p - c - (p * dp) + ((p - c - (p * dp)) * t)
-            }// Price [C] [B1] [A1] = Price [A] [B1] [C] -- 13
-
-            else -> {
-                // Do Nothing?
-                result = 0.0
-            }
-        }
-        return result
     }
 }
