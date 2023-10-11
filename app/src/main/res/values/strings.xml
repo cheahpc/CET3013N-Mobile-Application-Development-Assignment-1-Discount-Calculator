@@ -91,7 +91,7 @@
     <string name="f22">P - (P * D) - C + (P * T)</string>
     <string name="f23">P - C + ((P - C) * T) - ((P - C + ((P - C) * T)) * D)</string>
     <string name="f24">P - C + ((P - C) * T) - (P * D)</string>
-    <string name="f25">P - C + (P * T) - ((P + (P * T)) * D)</string>
+    <string name="f25">P - C + (P * T) - ((P - C + (P * T)) * D)</string>
     <string name="f26">P - C + (P * T) - (P * D)</string>
     <string name="f27">P - C - ((P - C) * D) + ((P - C - ((P - C) * D)) * T)</string>
     <string name="f28">P - C - ((P - C) * D) + (P * T)</string>
