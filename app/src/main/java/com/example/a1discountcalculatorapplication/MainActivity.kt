@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
 
-//         Set Formula
+        // Set Formula
         dvm.formula = b.tvFormula.text.toString()
 
         dvm.priceError = b.ettPrice.error != null
@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity() {
         dvm.discountSwitch = b.switchPercent.isChecked
         dvm.discountSwitch_enable = b.switchPercent.isEnabled
 
-        // Check Sequence
+        // Check Sequence and set formula arrangement
         dvm.sequence = ""
         val cont = b.resultContainer
         for (x in 3..cont.childCount) {
@@ -86,7 +86,7 @@ class MainActivity : AppCompatActivity() {
 
         val cont = b.resultContainer as ViewGroup
 
-//        Set Formula
+        // Set Formula string
         if (dvm.formula.isNotBlank()) {
             b.tvFormula.text = dvm.formula
         }
@@ -102,7 +102,7 @@ class MainActivity : AppCompatActivity() {
         b.switchPercent.isChecked = dvm.discountSwitch
         b.switchPercent.isEnabled = dvm.discountSwitch_enable
 
-        // Set sequence
+        // Set sequence and add corresponding row
         if (dvm.sequence.isNotEmpty()) {
             cont.removeView(b.row2)
             cont.removeView(b.row3)
@@ -124,7 +124,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-
 
         // Set color
         if (dvm.priceError) {
@@ -179,65 +178,59 @@ class MainActivity : AppCompatActivity() {
         if(dvm.couponFocus) b.ettDiscountFixed.requestFocus()
     }
 
-//    override fun onConfigurationChanged(newConfig: Configuration) {
-//        super.onConfigurationChanged(newConfig)
-//        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-//            Toast.makeText(baseContext, "Landscape Mode", Toast.LENGTH_SHORT).show()
-//        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-//            Toast.makeText(baseContext, "Portrait Mode", Toast.LENGTH_SHORT).show()
-//        }
-//        setContentView(R.layout.activity_main)
-//        b = ActivityMainBinding.inflate(layoutInflater)
-//        setContentView(b.root)
-//        // Refresh the ui
-//        uiInit()
-//    }
-
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu, menu)
+        // Set flip option to enabled in landscape mode and false in portrait mode
         menu.findItem(R.id.menu_flip).isEnabled = when (resources.configuration.orientation) {
             Configuration.ORIENTATION_LANDSCAPE -> true
             Configuration.ORIENTATION_PORTRAIT -> false
             else -> false
         }
-
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            // Reset every thing
             R.id.menu_reset -> {
+                // Set background color
                 b.row1.setBackgroundColor(getColor(R.color.transparent))
                 b.row2.setBackgroundColor(getColor(R.color.transparent))
                 b.row3.setBackgroundColor(getColor(R.color.transparent))
                 b.row4.setBackgroundColor(getColor(R.color.transparent))
 
+                // Set text color
                 b.tvPrice.setTextColor(getColor(R.color.dark_blue))
                 b.switchTaxRate.setTextColor(getColor(R.color.dark_blue))
                 b.switchPercent.setTextColor(getColor(R.color.dark_blue))
                 b.tvFixed.setTextColor(getColor(R.color.dark_blue))
-
+                
+                // Set focus
                 switchRowFocus()
 
+                // Reset all text
                 b.ettPrice.text = null
                 b.ettTaxRate.text = null
                 b.ettDiscountPercent.text = null
                 b.ettDiscountFixed.text = null
 
+                // Reset edit text error
                 b.ettPrice.error = null
                 b.ettTaxRate.error = null
                 b.ettDiscountPercent.error = null
                 b.ettDiscountFixed.error = null
             }
 
+            // Flip the screen
             R.id.menu_flip -> {
-                // Flip the screen
+                // Get the current row order
                 prevFocusView = currentFocus as EditText
                 val container = b.container as ViewGroup
                 val v1 = container.getChildAt(0)
                 val v2 = container.getChildAt(1)
                 val v3 = container.getChildAt(2)
 
+                // Set animation and duration
                 val exitAnimation = AnimationUtils.makeOutAnimation(this, true)
                 val enterAnimation = AnimationUtils.makeInAnimation(this, true)
                 exitAnimation.duration = 250
@@ -281,8 +274,8 @@ class MainActivity : AppCompatActivity() {
 
             }
 
+            // Show the about fragment
             R.id.menu_about -> {
-                // Show the fragment
                 AboutView().show(supportFragmentManager, "about_fragment")
             }
         }
@@ -293,6 +286,7 @@ class MainActivity : AppCompatActivity() {
         val rCont = b.resultContainer
         var result = 0.0
         var fString = ""
+        // Get values into variables
         val vPrice =
             if (b.ettPrice.text.isNotEmpty()) b.ettPrice.text.toString().toDouble() else 0.0
         val vTax =
@@ -306,6 +300,7 @@ class MainActivity : AppCompatActivity() {
                 .toDouble() else 0.0
         val x = Discount(vPrice, vTax, vDP, vDF)
 
+        // Check the frist row and determine the subsequent row. Base on that, use the corresponding formula to calculate the result
         when (rCont.childCount) {
             3 -> {
                 // Price
@@ -554,13 +549,17 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Update Result and UI
+        // Update Result and refresh UI 
         result = BigDecimal(result).setScale(2, RoundingMode.HALF_UP).toDouble()
         b.tvResult.text = result.toString()
         b.tvFormula.text = fString
     }
 
     private fun focusRow(previous: Boolean) {
+        // Customized function to shift focus to next row or previous row
+        // Used for up and down button in onClickListener
+        // Focus next row if the previous argument is false
+        // Focus previous row if the previous argument is true
         if (previous) {
             // Focus previous row
             val cont = b.resultContainer
@@ -601,6 +600,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun switchRowFocus() {
+        // Switches focus between rows
+        // A customized funciton to process the row swtich or focus swtich 
+        // so the correct color, error, and value is set correctly
         var prevRow: View = when (prevFocusView) {
             b.ettPrice -> b.row1
             b.ettTaxRate -> b.row2
@@ -614,7 +616,7 @@ class MainActivity : AppCompatActivity() {
             else -> b.tvFixed
         }
 
-        // Process Previous Row
+        // Process Previous Row, set color, text, and error etc
         if (prevFocusView.text.isNotEmpty()) {
             // Set Tax and Percent Off Limit to 100
             if ((prevFocusView == b.ettTaxRate) or (prevFocusView == b.ettDiscountPercent)) {
@@ -656,7 +658,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Process Current Row
+        // Process Current Row, set color, error, etc
         prevFocusView = focus()
         prevFocusView.setSelection(prevFocusView.text.length)
         prevRow = when (prevFocusView) {
@@ -671,7 +673,7 @@ class MainActivity : AppCompatActivity() {
             b.ettDiscountPercent -> b.switchPercent
             else -> b.tvFixed
         }
-        // Highlight the row
+        // Highlight the current row
         prevLabel.setTextColor(getColor(R.color.white))
         prevFocusView.setTextColor(getColor(R.color.white))
         prevFocusView.error = null
@@ -679,6 +681,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun focus(): EditText {
+        // A custom function that returns the current focus edit text view
+        // Check if there is something being focused, if nothing is being focused, 
+        // force focus to ettPrice and return the ettPrice EditText
         if (currentFocus != null) {
             return currentFocus as EditText
         }
@@ -687,25 +692,25 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun uiInit() {
+        // Custom fucntion to group all codes requried to setup the main activity.
         b = ActivityMainBinding.inflate(layoutInflater)
         setContentView(b.root)
         // Setup UI
         setSupportActionBar(b.toolbar)
-
+        // Set view model
         dvm = ViewModelProvider(this)[DiscountView::class.java]
-
+        
+        // Disable soft keyboard for all edit text field
         b.ettPrice.showSoftInputOnFocus = false
         b.ettTaxRate.showSoftInputOnFocus = false
         b.ettDiscountPercent.showSoftInputOnFocus = false
         b.ettDiscountFixed.showSoftInputOnFocus = false
 
-        // set default focus
+        // set initial focus
         b.ettPrice.requestFocus()
-        // Set focused id
         prevFocusView = focus()
-        //Refresh UI
 
-        // Set animation
+        // Set animation and animation duration
         val enterAnimation = AnimationUtils.makeInAnimation(this, true)
         val exitAnimation = AnimationUtils.makeOutAnimation(this, true)
         enterAnimation.duration = 250
@@ -715,28 +720,36 @@ class MainActivity : AppCompatActivity() {
         b.btnDown.setOnClickListener { focusRow(false) }
         b.btnUp.setOnClickListener { focusRow(true) }
         b.btnBack.setOnClickListener {
+            // Backspace key, remove one character from the edit text field 
+            // base on the current cursor position.
             val length = focus().length()
             if (length > 0) {
                 val start = focus().selectionStart
                 val end = focus().selectionEnd
                 if (start > 0) {
                     if (end - start > 0) {
+                        // Delete selection
                         focus().text.delete(start, end)
                     } else {
+                        // Delete only one character
                         focus().text.delete(start - 1, start)
                     }
                 }
             }
         }
         b.btnAllClear.setOnClickListener {
+            // Clear the current focused edit text view
             focus().text = null
             focus().error = null
         }
         b.tvResult.setOnClickListener {
+            // set clipboard service
             val clipboardManager =
                 getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            // copy the result content to clipboard
             val clipData = ClipData.newPlainText("text", b.tvResult.text)
             clipboardManager.setPrimaryClip(clipData)
+            // Display coppy successful message
             Toast.makeText(
                 this, "The final price has been copied to your clipboard.", Toast.LENGTH_SHORT
             ).show()
@@ -897,6 +910,7 @@ class MainActivity : AppCompatActivity() {
 
         // On checked change for Tax; Percent
         b.switchTaxRate.setOnClickListener {
+            // Display corresponding message for tax rate calculation method
             if (b.switchTaxRate.isChecked) {
                 Toast.makeText(
                     this,
@@ -913,6 +927,7 @@ class MainActivity : AppCompatActivity() {
             calculate()
         }
         b.switchPercent.setOnClickListener {
+            // Display corresponding message for percent off calculation method
             if (b.switchPercent.isChecked) {
                 Toast.makeText(
                     this,
@@ -938,51 +953,66 @@ class MainActivity : AppCompatActivity() {
         // On focus change
         b.ettPrice.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
+                // Process row format when switch focus
                 switchRowFocus()
             }
+            // Re-calculate and refresh the UI
             calculate()
         }
         b.ettTaxRate.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
+                // Process row format when switch focus
                 switchRowFocus()
             }
+            // Re-calculate and refresh the UI
             calculate()
-
         }
         b.ettDiscountPercent.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
+                // Process row format when switch focus
                 switchRowFocus()
             }
+            // Re-calculate and refresh the UI
             calculate()
         }
         b.ettDiscountFixed.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
+                // Process row format when switch focus
                 switchRowFocus()
             }
+            // Re-calculate and refresh the UI
             calculate()
         }
     }
 
     @Suppress("unused")
     fun numKeyAction(view: View) {
+        // Function of OnClick action for all the number buttons
+        // actually applied in xml layout file through OnClickAction attribute
+        // Set regular expression for checking decimal
         val defaultDecimalFormat = Regex("^[0-9]*.?[0-9]{0,2}$")
         if (view is Button) {
             val start = focus().selectionStart
             val end = focus().selectionEnd
+            // Delete the selected text for replacing with new digit
             if (end - start > 0) {
                 focus().text.delete(start, end)
             }
-
+            // Check if the text of the current focus is empty.
             if (focus().text.isEmpty()) {
+                // If it is empty and the button pressed is "." then add 0 in front
                 if (view.text.equals(".")) {
                     focus().setText("0.")
                     focus().setSelection(focus().length())
                     return
                 }
             }
+            // Get the existing text in the edit text view and add the intended character to existing text 
+            // to the temp string for checking if the text complies with the regex format 
             var temp: String = focus().text.toString()
             temp = temp.substring(0, start) + view.text + temp.substring(start)
 
+            // If the temporary string match with the defined regex format, allow the charracter input
             if (temp.matches(defaultDecimalFormat)) {
                 focus().text.insert(start, view.text)
             }

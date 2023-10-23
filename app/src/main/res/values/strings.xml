@@ -36,6 +36,7 @@
     <string name="on_off_fixed">Coupon</string>
     <string name="error">ERROR</string>
 
+    <!-- Alternative formula display -->
 <!--    <string name="f1">Price</string>-->
 <!--    <string name="f2">Price + (Price * Tax)</string>-->
 <!--    <string name="f3">Price - (Price * Discount%)</string>-->

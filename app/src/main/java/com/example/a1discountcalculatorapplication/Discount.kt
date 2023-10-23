@@ -7,7 +7,9 @@ class Discount(
     private var c: Double = 0.0
 ) {
     private var result: Double = 0.0
+    // Calculation Method - base on 22 possible formula
     fun calculateResult(formula: Int): Double {
+        // Decide which formula to use base on formula argument
         when (formula) {
             1 -> {
                 // Price

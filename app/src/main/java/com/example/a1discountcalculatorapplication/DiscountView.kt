@@ -3,7 +3,7 @@ package com.example.a1discountcalculatorapplication
 import androidx.lifecycle.ViewModel
 
 class DiscountView : ViewModel() {
-
+    // Formula string
     var formula = ""
 
     // Focus
